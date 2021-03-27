@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx
+    restart: always
+    labels:
+      traefik.enable: true
+      traefik.http.routers.img-http.rule: "Host(`estcequekahnalafib.re`)"
+      traefik.http.routers.img-http.entrypoints: web
+      traefik.http.routers.img-https.rule: "Host(`estcequekahnalafib.re`)"
+      traefik.http.routers.img-https.tls: true
+      traefik.http.routers.img-https.entrypoints: websecure
+      traefik.http.routers.img-https.tls.certresolver: letsencrypt
+      traefik.docker.network: traefik_web
+    networks:
+      - traefik
+      - internal
+    volumes:
+      - ./app:/usr/share/nginx/html
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 64M
+
+      
+networks:
+  traefik:
+    external:
+      name: traefik_web
+  internal:
+    driver: bridge
